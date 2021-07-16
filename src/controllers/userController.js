@@ -66,7 +66,7 @@ module.exports = {
             const allUsers = await User.find();
             return res.status(200).send(allUsers)
         } catch (error) {
-            return res.status(400).send(err);
+            return res.status(400).send(error);
         }
     },
 
