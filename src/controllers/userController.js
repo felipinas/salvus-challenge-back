@@ -60,7 +60,7 @@ module.exports = {
             return res.status(400).send(err)
         }
     },
-    
+
     async read(req, res) {
         try {
             const allUsers = await User.find();
@@ -68,6 +68,55 @@ module.exports = {
         } catch (error) {
             return res.status(400).send(error);
         }
+    },
+
+    async update(req, res) {
+        const {
+            name,
+            birthDate,
+            email,
+            password,
+            tel,
+            gender,
+            profi,
+            registerNumber,
+            specialty,
+            location,
+            maxDistance
+        } = req.body;
+
+        const { user_id } = req.params;
+
+        try {
+
+            const updatedData = {
+                name,
+                birthDate,
+                email,
+                password,
+                tel,
+                gender,
+                profi,
+                registerNumber,
+                specialty,
+                location,
+                maxDistance
+            }
+
+            if (updatedData.password === "") {
+                delete updatedData.password;
+            } else {
+                updatedData.password = await encryptPassword(password)
+            }
+
+            const userToUpdate = await User.updateOne({ _id: user_id }, updatedData);
+
+            return res.status(200).send(userToUpdate);
+
+        } catch (error) {
+            return res.status(400).send(error)
+        }
+
     },
 
     async delete(req, res) {
@@ -85,5 +134,16 @@ module.exports = {
         } catch (error) {
             return res.status(400).send(err);
         }
-    }  
+    },
+
+    async findUser(req, res) {
+        const { user_id } = req.params;
+
+        try {
+            const userData = await User.findOne( { _id: user_id } );
+            return res.status(200).send(userData)
+        } catch (error) {
+            return res.status(400).send(error);
+        }
+    }
 }
